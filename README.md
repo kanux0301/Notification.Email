@@ -36,46 +36,6 @@ This worker service consumes messages from the `notifications.email` queue, send
 └─────────────────────────┘
 ```
 
-## Project Structure (Clean Architecture + DDD)
-
-```
-Notification.Email/
-├── src/
-│   ├── Notification.Email.Domain/           # Domain layer
-│   │   ├── Common/                          # Base classes (Entity, AggregateRoot, ValueObject)
-│   │   ├── Entities/                        # EmailMessage aggregate root
-│   │   ├── ValueObjects/                    # EmailAddress, EmailContent, Recipient
-│   │   ├── Enums/                           # EmailStatus, EmailPriority
-│   │   ├── Events/                          # Domain events
-│   │   └── Services/                        # IEmailProvider, IStatusPublisher interfaces
-│   │
-│   ├── Notification.Email.Application/      # Application layer (CQRS)
-│   │   ├── Common/                          # Result, Error, ICommand interfaces
-│   │   ├── Behaviors/                       # ValidationBehavior (MediatR pipeline)
-│   │   └── Emails/Commands/ProcessEmail/    # Command, Handler, Validator
-│   │
-│   ├── Notification.Email.Infrastructure/   # Infrastructure layer
-│   │   ├── Configuration/                   # MessagingOptions, SmtpOptions
-│   │   ├── Messaging/                       # RabbitMQ/Azure Service Bus consumers & publishers
-│   │   └── Providers/                       # ConsoleEmailProvider, SmtpEmailProvider
-│   │
-│   └── Notification.Email.Worker/           # Host layer
-│       ├── Program.cs                       # DI composition root
-│       ├── Worker.cs                        # Background service
-│       └── appsettings.json
-│
-├── test/
-│   └── Notification.Email.Worker.Tests/
-│       ├── Domain/                          # ValueObject & Entity tests
-│       ├── Application/                     # Command & Validator tests
-│       ├── Infrastructure/                  # Provider tests
-│       └── Integration/                     # Mailpit integration tests
-│
-└── deployment/
-    ├── build.yaml                           # Azure DevOps CI/CD pipeline
-    └── Dockerfile                           # Container image definition
-```
-
 ## Prerequisites
 
 - .NET 10.0 SDK
@@ -242,22 +202,6 @@ dotnet test --filter "Category=Integration"
 | `DELETE /api/v1/messages` | Clear all emails |
 | `GET /api/v1/search?query=to:email@test.com` | Search emails |
 
-## Build & Deploy
-
-### Local Build
-
-```bash
-dotnet build -c Release
-dotnet publish -c Release -o ./publish
-```
-
-### Docker Build
-
-```bash
-docker build -f deployment/Dockerfile -t notification-email-worker .
-docker run notification-email-worker
-```
-
 ### CI/CD Pipeline
 
 The `deployment/build.yaml` is configured for Azure DevOps with:
@@ -338,10 +282,6 @@ The worker publishes status updates to `notifications.status`:
 
 ## Security
 
-### Managing Secrets
-
-Never commit secrets to the repository. Use one of these approaches:
-
 #### Development (User Secrets)
 
 ```bash
@@ -364,10 +304,6 @@ set Smtp__UserName=your-username
 set Smtp__Password=your-password
 set Smtp__FromAddress=your-email@example.com
 ```
-
-#### CI/CD (Pipeline Variables)
-
-Use Azure DevOps Variable Groups or GitHub Secrets.
 
 ## Adding Custom Email Providers
 
@@ -393,7 +329,3 @@ case "custom":
     services.AddSingleton<IEmailProvider, CustomEmailProvider>();
     break;
 ```
-
-## License
-
-MIT
