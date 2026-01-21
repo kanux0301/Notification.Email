@@ -1,0 +1,106 @@
+trigger:
+  branches:
+    include:
+      - main
+      - master
+  paths:
+    include:
+      - src/**
+      - test/**
+
+pr:
+  branches:
+    include:
+      - main
+      - master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  dotnetVersion: '10.x'
+  projectPath: 'src/Notification.Email.Worker/Notification.Email.Worker.csproj'
+  testProjectPath: 'test/Notification.Email.Worker.Tests/Notification.Email.Worker.Tests.csproj'
+
+stages:
+  - stage: Build
+    displayName: 'Build and Test'
+    jobs:
+      - job: BuildJob
+        displayName: 'Build, Test, and Publish'
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Install .NET SDK'
+            inputs:
+              packageType: 'sdk'
+              version: '$(dotnetVersion)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore packages'
+            inputs:
+              command: 'restore'
+              projects: '**/*.csproj'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build solution'
+            inputs:
+              command: 'build'
+              projects: '**/*.csproj'
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Run tests'
+            inputs:
+              command: 'test'
+              projects: '$(testProjectPath)'
+              arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage"'
+
+          - task: PublishCodeCoverageResults@2
+            displayName: 'Publish code coverage'
+            inputs:
+              summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Publish application'
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: '$(projectPath)'
+              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/app'
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish artifacts'
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/app'
+              ArtifactName: 'notification-email-worker'
+              publishLocation: 'Container'
+
+  - stage: Docker
+    displayName: 'Build Docker Image'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: DockerBuild
+        displayName: 'Build and Push Docker Image'
+        steps:
+          - task: Docker@2
+            displayName: 'Build Docker image'
+            inputs:
+              command: 'build'
+              Dockerfile: 'deployment/Dockerfile'
+              buildContext: '.'
+              tags: |
+                $(Build.BuildId)
+                latest
+
+          # Uncomment and configure for your container registry
+          # - task: Docker@2
+          #   displayName: 'Push to Container Registry'
+          #   inputs:
+          #     command: 'push'
+          #     containerRegistry: 'your-registry-connection'
+          #     repository: 'notification-email-worker'
+          #     tags: |
+          #       $(Build.BuildId)
+          #       latest

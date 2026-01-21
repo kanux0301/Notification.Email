@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Notification.Email.Application/Notification.Email.Application.csproj" />
+    <Project Path="src/Notification.Email.Domain/Notification.Email.Domain.csproj" />
+    <Project Path="src/Notification.Email.Infrastructure/Notification.Email.Infrastructure.csproj" />
+    <Project Path="src/Notification.Email.Worker/Notification.Email.Worker.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Notification.Email.Worker.Tests/Notification.Email.Worker.Tests.csproj" />
+  </Folder>
+</Solution>
