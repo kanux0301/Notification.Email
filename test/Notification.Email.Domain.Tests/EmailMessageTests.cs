@@ -2,8 +2,9 @@ using FluentAssertions;
 using Notification.Email.Domain.Entities;
 using Notification.Email.Domain.Enums;
 using Notification.Email.Domain.Events;
+using Xunit;
 
-namespace Notification.Email.Worker.Tests.Domain.Entities;
+namespace Notification.Email.Domain.Tests;
 
 public class EmailMessageTests
 {
@@ -38,9 +39,12 @@ public class EmailMessageTests
     [Fact]
     public void Create_ShouldRaiseEmailReceivedEvent()
     {
+        // Arrange
+        var notificationId = Guid.NewGuid();
+
         // Act
         var message = EmailMessage.Create(
-            notificationId: Guid.NewGuid(),
+            notificationId: notificationId,
             recipientEmail: "test@example.com",
             recipientName: null,
             subject: "Subject",
@@ -155,8 +159,11 @@ public class EmailMessageTests
         message.MarkAsProcessing();
         message.MarkAsFailed("Error");
 
+        // Act
+        var canRetry = message.CanRetry(maxRetries: 3);
+
         // Assert
-        message.CanRetry(maxRetries: 3).Should().BeTrue();
+        canRetry.Should().BeTrue();
     }
 
     [Fact]
@@ -172,8 +179,11 @@ public class EmailMessageTests
             if (i < 2) message.PrepareForRetry();
         }
 
+        // Act
+        var canRetry = message.CanRetry(maxRetries: 3);
+
         // Assert
-        message.CanRetry(maxRetries: 3).Should().BeFalse();
+        canRetry.Should().BeFalse();
         message.RetryCount.Should().Be(3);
     }
 

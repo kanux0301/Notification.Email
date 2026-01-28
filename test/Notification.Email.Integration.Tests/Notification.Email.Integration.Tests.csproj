@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="xunit" Version="2.9.3" />
@@ -19,7 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Notification.Email.Worker\Notification.Email.Worker.csproj" />
+    <ProjectReference Include="..\..\src\Notification.Email.Application\Notification.Email.Application.csproj" />
+    <ProjectReference Include="..\..\src\Notification.Email.Infrastructure\Notification.Email.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

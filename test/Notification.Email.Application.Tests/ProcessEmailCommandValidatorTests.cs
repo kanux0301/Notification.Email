@@ -1,7 +1,8 @@
 using FluentAssertions;
 using Notification.Email.Application.Emails.Commands.ProcessEmail;
+using Xunit;
 
-namespace Notification.Email.Worker.Tests.Application.Commands;
+namespace Notification.Email.Application.Tests;
 
 public class ProcessEmailCommandValidatorTests
 {

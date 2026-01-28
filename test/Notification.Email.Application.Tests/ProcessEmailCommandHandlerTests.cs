@@ -5,8 +5,9 @@ using Notification.Email.Application.Emails.Commands.ProcessEmail;
 using Notification.Email.Domain.Entities;
 using Notification.Email.Domain.Enums;
 using Notification.Email.Domain.Services;
+using Xunit;
 
-namespace Notification.Email.Worker.Tests.Application.Commands;
+namespace Notification.Email.Application.Tests;
 
 public class ProcessEmailCommandHandlerTests
 {

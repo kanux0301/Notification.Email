@@ -6,8 +6,9 @@ using Notification.Email.Domain.Entities;
 using Notification.Email.Domain.Enums;
 using Notification.Email.Infrastructure.Configuration;
 using Notification.Email.Infrastructure.Providers;
+using Xunit;
 
-namespace Notification.Email.Worker.Tests.Integration;
+namespace Notification.Email.Integration.Tests;
 
 /// <summary>
 /// Integration tests using Mailpit as a fake SMTP server.
@@ -107,6 +108,7 @@ public class EmailIntegrationTests : IAsyncLifetime
     [Trait("Category", "Integration")]
     public async Task SendHtmlEmail_ShouldPreserveHtmlContent()
     {
+        // Skip if Mailpit is not running
         if (!await IsMailpitRunning())
         {
             return;
@@ -145,6 +147,7 @@ public class EmailIntegrationTests : IAsyncLifetime
     [Trait("Category", "Integration")]
     public async Task SendMultipleEmails_AllShouldBeReceived()
     {
+        // Skip if Mailpit is not running
         if (!await IsMailpitRunning())
         {
             return;

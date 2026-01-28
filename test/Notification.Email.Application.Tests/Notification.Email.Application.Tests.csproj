@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Notification.Email.Worker\Notification.Email.Worker.csproj" />
+    <ProjectReference Include="..\..\src\Notification.Email.Application\Notification.Email.Application.csproj" />
   </ItemGroup>
 
 </Project>

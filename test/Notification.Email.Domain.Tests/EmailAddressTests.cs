@@ -1,7 +1,8 @@
 using FluentAssertions;
 using Notification.Email.Domain.ValueObjects;
+using Xunit;
 
-namespace Notification.Email.Worker.Tests.Domain.ValueObjects;
+namespace Notification.Email.Domain.Tests;
 
 public class EmailAddressTests
 {
@@ -11,7 +12,7 @@ public class EmailAddressTests
     [InlineData("user+tag@example.co.uk")]
     public void Create_WithValidEmail_ShouldSucceed(string email)
     {
-        // Act
+        // Arrange & Act
         var result = EmailAddress.Create(email);
 
         // Assert
@@ -24,7 +25,7 @@ public class EmailAddressTests
     [InlineData(null)]
     public void Create_WithEmptyEmail_ShouldThrow(string? email)
     {
-        // Act
+        // Arrange & Act
         var act = () => EmailAddress.Create(email!);
 
         // Assert
@@ -38,7 +39,7 @@ public class EmailAddressTests
     [InlineData("@nodomain.com")]
     public void Create_WithInvalidFormat_ShouldThrow(string email)
     {
-        // Act
+        // Arrange & Act
         var act = () => EmailAddress.Create(email);
 
         // Assert
@@ -75,8 +76,11 @@ public class EmailAddressTests
     [Fact]
     public void CreateOrDefault_WithInvalidEmail_ShouldReturnNull()
     {
+        // Arrange
+        var email = "invalid";
+
         // Act
-        var result = EmailAddress.CreateOrDefault("invalid");
+        var result = EmailAddress.CreateOrDefault(email);
 
         // Assert
         result.Should().BeNull();
@@ -85,8 +89,11 @@ public class EmailAddressTests
     [Fact]
     public void CreateOrDefault_WithValidEmail_ShouldReturnEmailAddress()
     {
+        // Arrange
+        var email = "test@example.com";
+
         // Act
-        var result = EmailAddress.CreateOrDefault("test@example.com");
+        var result = EmailAddress.CreateOrDefault(email);
 
         // Assert
         result.Should().NotBeNull();
@@ -100,7 +107,7 @@ public class EmailAddressTests
         var email1 = EmailAddress.Create("test@example.com");
         var email2 = EmailAddress.Create("test@example.com");
 
-        // Assert
+        // Act & Assert
         email1.Should().Be(email2);
     }
 
