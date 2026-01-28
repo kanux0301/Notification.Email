@@ -1,15 +1,20 @@
 using FluentAssertions;
 using Notification.Email.Domain.ValueObjects;
+using Xunit;
 
-namespace Notification.Email.Worker.Tests.Domain.ValueObjects;
+namespace Notification.Email.Domain.Tests;
 
 public class RecipientTests
 {
     [Fact]
     public void Create_WithEmailAndName_ShouldSucceed()
     {
+        // Arrange
+        var email = "test@example.com";
+        var name = "John Doe";
+
         // Act
-        var recipient = Recipient.Create("test@example.com", "John Doe");
+        var recipient = Recipient.Create(email, name);
 
         // Assert
         recipient.Address.Value.Should().Be("test@example.com");
@@ -19,8 +24,11 @@ public class RecipientTests
     [Fact]
     public void Create_WithEmailOnly_ShouldSucceed()
     {
+        // Arrange
+        var email = "test@example.com";
+
         // Act
-        var recipient = Recipient.Create("test@example.com");
+        var recipient = Recipient.Create(email);
 
         // Assert
         recipient.Address.Value.Should().Be("test@example.com");
@@ -30,8 +38,12 @@ public class RecipientTests
     [Fact]
     public void Create_ShouldTrimName()
     {
+        // Arrange
+        var email = "test@example.com";
+        var name = "  John Doe  ";
+
         // Act
-        var recipient = Recipient.Create("test@example.com", "  John Doe  ");
+        var recipient = Recipient.Create(email, name);
 
         // Assert
         recipient.Name.Should().Be("John Doe");
@@ -79,8 +91,12 @@ public class RecipientTests
     [Fact]
     public void Create_WithInvalidEmail_ShouldThrow()
     {
+        // Arrange
+        var email = "invalid-email";
+        var name = "John Doe";
+
         // Act
-        var act = () => Recipient.Create("invalid-email", "John Doe");
+        var act = () => Recipient.Create(email, name);
 
         // Assert
         act.Should().Throw<ArgumentException>();
@@ -93,7 +109,7 @@ public class RecipientTests
         var recipient1 = Recipient.Create("test@example.com", "John Doe");
         var recipient2 = Recipient.Create("test@example.com", "John Doe");
 
-        // Assert
+        // Act & Assert
         recipient1.Should().Be(recipient2);
     }
 }

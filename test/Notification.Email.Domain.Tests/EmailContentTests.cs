@@ -1,15 +1,21 @@
 using FluentAssertions;
 using Notification.Email.Domain.ValueObjects;
+using Xunit;
 
-namespace Notification.Email.Worker.Tests.Domain.ValueObjects;
+namespace Notification.Email.Domain.Tests;
 
 public class EmailContentTests
 {
     [Fact]
     public void Create_WithValidContent_ShouldSucceed()
     {
+        // Arrange
+        var subject = "Test Subject";
+        var body = "Test Body";
+        var isHtml = false;
+
         // Act
-        var content = EmailContent.Create("Test Subject", "Test Body", false);
+        var content = EmailContent.Create(subject, body, isHtml);
 
         // Assert
         content.Subject.Should().Be("Test Subject");
@@ -20,8 +26,13 @@ public class EmailContentTests
     [Fact]
     public void Create_WithHtmlContent_ShouldSetIsHtml()
     {
+        // Arrange
+        var subject = "Subject";
+        var body = "<html><body>Hello</body></html>";
+        var isHtml = true;
+
         // Act
-        var content = EmailContent.Create("Subject", "<html><body>Hello</body></html>", true);
+        var content = EmailContent.Create(subject, body, isHtml);
 
         // Assert
         content.IsHtml.Should().BeTrue();
@@ -30,8 +41,12 @@ public class EmailContentTests
     [Fact]
     public void Create_WithNullSubject_ShouldSucceed()
     {
+        // Arrange
+        string? subject = null;
+        var body = "Body content";
+
         // Act
-        var content = EmailContent.Create(null, "Body content");
+        var content = EmailContent.Create(subject, body);
 
         // Assert
         content.Subject.Should().BeNull();
@@ -44,7 +59,7 @@ public class EmailContentTests
     [InlineData(null)]
     public void Create_WithEmptyBody_ShouldThrow(string? body)
     {
-        // Act
+        // Arrange & Act
         var act = () => EmailContent.Create("Subject", body!);
 
         // Assert
@@ -55,8 +70,12 @@ public class EmailContentTests
     [Fact]
     public void Create_ShouldTrimSubject()
     {
+        // Arrange
+        var subject = "  Subject  ";
+        var body = "Body";
+
         // Act
-        var content = EmailContent.Create("  Subject  ", "Body");
+        var content = EmailContent.Create(subject, body);
 
         // Assert
         content.Subject.Should().Be("Subject");
@@ -69,7 +88,7 @@ public class EmailContentTests
         var content1 = EmailContent.Create("Subject", "Body", true);
         var content2 = EmailContent.Create("Subject", "Body", true);
 
-        // Assert
+        // Act & Assert
         content1.Should().Be(content2);
     }
 
@@ -80,7 +99,7 @@ public class EmailContentTests
         var content1 = EmailContent.Create("Subject", "Body", true);
         var content2 = EmailContent.Create("Subject", "Body", false);
 
-        // Assert
+        // Act & Assert
         content1.Should().NotBe(content2);
     }
 }

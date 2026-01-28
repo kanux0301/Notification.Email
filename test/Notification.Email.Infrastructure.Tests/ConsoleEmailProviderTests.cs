@@ -4,8 +4,9 @@ using Moq;
 using Notification.Email.Domain.Entities;
 using Notification.Email.Domain.Enums;
 using Notification.Email.Infrastructure.Providers;
+using Xunit;
 
-namespace Notification.Email.Worker.Tests.Infrastructure.Providers;
+namespace Notification.Email.Infrastructure.Tests;
 
 public class ConsoleEmailProviderTests
 {
@@ -101,6 +102,26 @@ public class ConsoleEmailProviderTests
 
         // Assert
         result.Success.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task SendAsync_ShouldLogMessage()
+    {
+        // Arrange
+        var message = CreateTestMessage();
+
+        // Act
+        await _provider.SendAsync(message);
+
+        // Assert
+        _loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("EMAIL SENT")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
     }
 
     private static EmailMessage CreateTestMessage()
