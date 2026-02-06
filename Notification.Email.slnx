@@ -6,10 +6,18 @@
     <Project Path="src/Notification.Email.Worker/Notification.Email.Worker.csproj" />
   </Folder>
   <Folder Name="/test/">
-    <Project Path="test/Notification.Email.Domain.Tests/Notification.Email.Domain.Tests.csproj" />
-    <Project Path="test/Notification.Email.Application.Tests/Notification.Email.Application.Tests.csproj" />
-    <Project Path="test/Notification.Email.Infrastructure.Tests/Notification.Email.Infrastructure.Tests.csproj" />
+    <Project Path="test/Notification.Email.Domain.Tests/Notification.Email.Domain.Tests.csproj">
+      <Build Solution="Debug|*" Project="false" />
+    </Project>
+    <Project Path="test/Notification.Email.Application.Tests/Notification.Email.Application.Tests.csproj">
+      <Build Solution="Debug|*" Project="false" />
+    </Project>
+    <Project Path="test/Notification.Email.Infrastructure.Tests/Notification.Email.Infrastructure.Tests.csproj">
+      <Build Solution="Debug|*" Project="false" />
+    </Project>
     <Project Path="test/Notification.Email.Worker.Tests/Notification.Email.Worker.Tests.csproj" />
-    <Project Path="test/Notification.Email.Integration.Tests/Notification.Email.Integration.Tests.csproj" />
+    <Project Path="test/Notification.Email.Integration.Tests/Notification.Email.Integration.Tests.csproj">
+      <Build Solution="Debug|*" Project="false" />
+    </Project>
   </Folder>
 </Solution>
