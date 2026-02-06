@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  notification-email-worker:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Production
+      - Messaging__Provider=RabbitMQ
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=5672
+      - RabbitMQ__UserName=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__ExchangeName=notifications
+      - RabbitMQ__QueueName=notifications.email
+      - EmailProvider__Provider=Smtp
+      - Smtp__Host=mailpit
+      - Smtp__Port=1025
+      - Smtp__UseSsl=false
+      - Smtp__UserName=
+      - Smtp__Password=
+      - Smtp__FromAddress=noreply@notification.local
+      - Smtp__FromName=Notification System
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - notification-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - notification-network
+
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - notification-network
+
+networks:
+  notification-network:
+    driver: bridge
+
+volumes:
+  rabbitmq_data:
